@@ -22,11 +22,6 @@
 #define ENABLE_SERIAL_READ true
 
 /**
- * Enable the I2C Display module
- */
-#define ENABLE_I2C_DISPLAY false
-
-/**
  * ESP-8266 specific features
  */
 #ifdef ESP8266
@@ -35,5 +30,16 @@
  * Enable the PIR Sensor module. Doesn't work with ESP32 due to conflicting D6 sensor type
  */
 #define ENABLE_PIR_SENSOR true
+
+/**
+ * Enable generic I2C scan functionality
+ */
+#define ENABLE_I2C true
+
+#ifdef ENABLE_I2C
+
+#define ENABLE_AHT25 true
+
+#endif
 
 #endif

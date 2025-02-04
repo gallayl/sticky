@@ -11,7 +11,8 @@
 #include "../../CommandInterpreter/CommandInterpreter.h"
 #include "../../services/WebServer.h"
 
-String scanDevices(){
+String scanDevices()
+{
     JsonDocument doc = JsonDocument().as<JsonArray>();
 
     Wire.begin();
@@ -34,37 +35,38 @@ String scanDevices(){
     return String(buffer);
 }
 
-String readDevice(uint16_t address, uint16_t size){
+String readDevice(uint16_t address, uint16_t size)
+{
     Wire.requestFrom(address, size);
     return String(Wire.read());
 }
 
-String writeDevice(uint16_t address, String data){
-        Wire.beginTransmission(address);
+void writeDevice(uint16_t address, String data)
+{
+    Wire.beginTransmission(address);
 
-        int str_len = data.length() + 1;
-        char buf[str_len];
-        data.toCharArray(buf, str_len);
-        char *p = buf;
-        char *str;
-        while ((str = strtok_r(p, ";", &p)) != NULL)
+    int str_len = data.length() + 1;
+    char buf[str_len];
+    data.toCharArray(buf, str_len);
+    char *p = buf;
+    char *str;
+    while ((str = strtok_r(p, ";", &p)) != NULL)
+    {
+        if (String(str).startsWith("0x"))
         {
-            if (String(str).startsWith("0x"))
-            {
-                Wire.write(strtol(str, 0, 16));
-            }
-            else
-            {
-                Wire.write(str);
-            }
+            Wire.write(strtol(str, 0, 16));
         }
+        else
+        {
+            Wire.write(str);
+        }
+    }
 
-        Wire.endTransmission();
+    Wire.endTransmission();
 }
 
-
-
-CustomCommand *i2cCommand = new CustomCommand("i2c", [](String command) {
+CustomCommand *i2cCommand = new CustomCommand("i2c", [](String command)
+                                              {
     String sub = CommandParser::GetCommandParameter(command, 1);
     if (sub == "scan")
     {
@@ -85,16 +87,13 @@ CustomCommand *i2cCommand = new CustomCommand("i2c", [](String command) {
     }
 
     String fallback = "The awailable I2C Commands are: scan, read, write";
-    return fallback;
-});
+    return fallback; });
 
-Feature *i2cFeature = new Feature("i2c", [](){
-    
-    #ifdef ESP32
-    Wire.begin(GPIO_NUM_14, GPIO_NUM_15);
-#else
+Feature *i2cFeature = new Feature("i2c", []()
+                                  {
+
+
     Wire.begin();
-#endif
 
     CommandInterpreterInstance->RegisterCommand(*i2cCommand);
 
@@ -102,5 +101,4 @@ Feature *i2cFeature = new Feature("i2c", [](){
         request->send(200, MIME_json, scanDevices());
     });
 
-    return FeatureState::RUNNING;
-}, [](){});
+    return FeatureState::RUNNING; }, []() {});

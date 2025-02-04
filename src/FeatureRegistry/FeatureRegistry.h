@@ -19,6 +19,15 @@
 #include "./Features/Pir.h"
 #endif
 
+#if ENABLE_I2C
+#include "./Features/i2c.h"
+
+#if ENABLE_AHT25
+#include "./Features/aht25.h"
+#endif
+
+#endif
+
 #define FEATURES_SIZE 128
 
 class FeatureRegistry
@@ -34,35 +43,26 @@ public:
                 this->RegisterFeature(*TimeFeature);
                 this->RegisterFeature(*LoggingFeature);
                 this->RegisterFeature(*SystemFeatures);
-#if ENABLE_I2C_DISPLAY
-                this->RegisterFeature(*DisplayFeature);
-#endif
+
 #if ENABLE_SERIAL_READ
                 this->RegisterFeature(*SerialReadFeature);
-#endif
-
-#if ENABLE_PWM
-                this->RegisterFeature(*PwmFeature);
 #endif
 
 #if ENABLE_LITTLEFS
                 this->RegisterFeature(*LittleFsFeature);
 #endif
 
-#if ENABLE_DHT22
-                this->RegisterFeature(*Dht22Feature);
-#endif
-
 #if ENABLE_PIR_SENSOR
                 this->RegisterFeature(*PirFeature);
 #endif
 
-#if ENABLE_CAMERA
-                this->RegisterFeature(*CameraFeature);
+#if ENABLE_I2C
+                this->RegisterFeature(*i2cFeature);
+
+#if ENABLE_AHT25
+                this->RegisterFeature(*aht25Feature);
 #endif
 
-#if ENABLE_FLASHLIGHT
-                this->RegisterFeature(*FlashlightFeature);
 #endif
         }
 
