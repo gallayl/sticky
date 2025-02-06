@@ -75,7 +75,7 @@ CustomCommand *getPirStateCommand = new CustomCommand("getPirState", [](String c
                                                       {
   JsonDocument response = JsonDocument().to<JsonObject>();
   response["state"] = getPirState();
-  char buffer[64];
+  char buffer[JSON_BUFFER_SIZE];
   serializeJson(response, buffer);
   return String(buffer); });
 

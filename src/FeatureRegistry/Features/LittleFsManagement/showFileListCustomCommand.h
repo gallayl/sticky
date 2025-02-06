@@ -6,10 +6,9 @@
 #include "../../../api/list.h"
 #include "../Logging.h"
 
-#define LOG_BUFFER_LENGTH 1024
-
-CustomCommand *showFileListCustomCommand = new CustomCommand("list", [](String command) {
-    JsonDocument response = JsonDocument().to<JsonArray>();
+CustomCommand *showFileListCustomCommand = new CustomCommand("list", [](String command)
+                                                             {
+    JsonDocument response;
 
     File root = LittleFS.open("/", "r");
 
@@ -19,15 +18,21 @@ CustomCommand *showFileListCustomCommand = new CustomCommand("list", [](String c
         return String("");
     }
 
-    File file = root.openNextFile();
+    JsonArray files = response.to<JsonArray>();
 
-    while (file) {
-        JsonObject fileObject = JsonObject();
+    while (File file = root.openNextFile())
+    {
+        JsonObject fileObject = files.add<JsonObject>();
         fileObject["name"] = file.name();
         fileObject["size"] = file.size();
-        response.add(fileObject);
+        fileObject["isFile"] = file.isFile();
+        fileObject["isDirectory"] = file.isDirectory();
+        file.close();
     }
 
-    char buffer[LOG_BUFFER_LENGTH];
+    char buffer[JSON_BUFFER_SIZE];
     serializeJson(response, buffer);
+
+    root.close();
+
     return String(buffer); });

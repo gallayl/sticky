@@ -45,7 +45,8 @@ String getResetReason()
 }
 #endif
 
-JsonDocument getInfo(){
+JsonDocument getInfo()
+{
     JsonDocument response;
     JsonObject esp = response["esp"].to<JsonObject>();
 
@@ -60,28 +61,11 @@ JsonDocument getInfo(){
     flash["size"] = ESP.getFlashChipSize();
     flash["speed"] = ESP.getFlashChipSpeed();
 
-#ifdef ESP32
-    esp["restartReson"] = getResetReason();
-    esp["freePsRam"] = ESP.getFreePsram();
-
-    JsonObject camera = response["camera"].to<JsonObject>();
-    sensor_t *sensor = esp_camera_sensor_get();
-    camera["framesize"] = sensor->status.framesize;
-    camera["quality"] = sensor->status.quality;
-    camera["errorCode"] = cameraErrorCode;
-    
-
-    JsonObject littleFs = response["littleFs"].to<JsonObject>();
-    littleFs["totalBytes"] = LittleFS.totalBytes();
-    littleFs["usedBytes"] = LittleFS.usedBytes();
-
-#endif
-
     return response;
 }
 
 CustomCommand *infoCustomCommand = new CustomCommand("info", [](String command)
-                                              {
+                                                     {
     JsonDocument response = getInfo();
 
     char buffer[JSON_BUFFER_SIZE];

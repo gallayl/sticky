@@ -28,6 +28,10 @@
 
 #endif
 
+#if ENABLE_OTA
+#include "./Features/OTA.h"
+#endif
+
 #define FEATURES_SIZE 128
 
 class FeatureRegistry
@@ -63,6 +67,10 @@ public:
                 this->RegisterFeature(*aht25Feature);
 #endif
 
+#endif
+
+#if ENABLE_OTA
+                this->RegisterFeature(*OtaUpgrade);
 #endif
         }
 

@@ -22,6 +22,11 @@
 #define ENABLE_SERIAL_READ true
 
 /**
+ * Enable the OTA firmware upgrade feature
+ */
+#define ENABLE_OTA true
+
+/**
  * ESP-8266 specific features
  */
 #ifdef ESP8266
