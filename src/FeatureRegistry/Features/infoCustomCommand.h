@@ -23,6 +23,17 @@ JsonDocument getInfo()
     flash["size"] = ESP.getFlashChipSize();
     flash["speed"] = ESP.getFlashChipSpeed();
 
+    FSInfo fsInfo;
+    LittleFS.info(fsInfo);
+
+    JsonObject fs = response["fs"].to<JsonObject>();
+    fs["totalBytes"] = fsInfo.totalBytes;
+    fs["usedBytes"] = fsInfo.usedBytes;
+    fs["blockSize"] = fsInfo.blockSize;
+    fs["pageSize"] = fsInfo.pageSize;
+    fs["maxOpenFiles"] = fsInfo.maxOpenFiles;
+    fs["maxPathLength"] = fsInfo.maxPathLength;
+
     return response;
 }
 
