@@ -11,7 +11,7 @@ ArRequestHandlerFunction getUpdateForm = ([](AsyncWebServerRequest *request)
 
 ArRequestHandlerFunction getRedirectPage = ([](AsyncWebServerRequest *request)
                                             {
-                                                             AsyncWebServerResponse *response = request->beginResponse(200, MIME_html, "<html><head><meta http-equiv=\"refresh\" content=\"15\"></head><body>Update done, page will be refreshed.</body></html>");
+                                                             AsyncWebServerResponse *response = request->beginResponse(200, MIME_html, "<html><head><meta http-equiv=\"refresh\" content=\"30\"></head><body>Update done, page will be refreshed.</body></html>");
     response->addHeader("Refresh", REFRESH_TIMEOUT_AFTER_UPDATE);
     request->send(response); });
 
@@ -53,7 +53,8 @@ ArUploadHandlerFunction onUploadUpdate = ([](AsyncWebServerRequest *request, Str
         if (Update.end(true))
         {
             getRedirectPage(request);
-            delay(300);
+            delay(1000);
+            LoggerInstance->Info("Update done, rebooting...");
             ESP.restart();
         }
         else
