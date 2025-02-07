@@ -1,5 +1,4 @@
 #pragma once
-#include <Arduino.h>
 
 enum class FeatureState
 {
@@ -9,16 +8,16 @@ enum class FeatureState
     ERROR = 3
 };
 
-
 typedef enum FeatureState (*FeatureSetupFunction)();
 
 typedef void (*FeatureLoopFunction)();
 
-
 class Feature
 {
 public:
-    Feature(String name = "featureName", FeatureSetupFunction setupCallback = []() {return FeatureState::PENDING;}, FeatureLoopFunction loopCallback = []() {}) : _featureName(name), _onSetup(setupCallback), _onLoop(loopCallback) {};
+    Feature(String name = "featureName", FeatureSetupFunction setupCallback = []()
+                                         { return FeatureState::PENDING; },
+            FeatureLoopFunction loopCallback = []() {}) : _featureName(name), _onSetup(setupCallback), _onLoop(loopCallback) {};
 
     FeatureState Setup()
     {
@@ -42,8 +41,6 @@ public:
     {
         return this->_featureState;
     }
-
-
 
 protected:
     String _featureName;

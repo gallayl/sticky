@@ -1,6 +1,4 @@
 #pragma once
-
-#include <ArduinoJson.h>
 #include <LittleFS.h>
 #include "../../../CommandInterpreter/CustomCommand.h"
 #include "../../../api/list.h"

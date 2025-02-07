@@ -1,5 +1,3 @@
-#include <ArduinoJson.h>
-
 void merge(JsonObject dst, JsonVariantConst src)
 {
   if (src.is<JsonObjectConst>())

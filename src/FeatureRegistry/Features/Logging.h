@@ -1,7 +1,5 @@
 #pragma once
-#include <Arduino.h>
-#include <AsyncJson.h>  
-#include <ArduinoJson.h>
+#include <AsyncJson.h>
 #include <ESPAsyncWebServer.h>
 #include "../Feature.h"
 #include "./Time.h"
@@ -18,7 +16,6 @@ extern AsyncWebServer server;
 class Logger
 {
 public:
-
     JsonDocument getEntries()
     {
         return this->entries;
@@ -45,14 +42,13 @@ public:
         this->listenersCount++;
     }
 
-    Logger() {
+    Logger()
+    {
         this->entries = JsonDocument().to<JsonArray>();
         this->listenersCount = 0;
     }
 
-
 private:
-
     JsonDocument entries;
 
     byte listenersCount;
@@ -62,7 +58,7 @@ private:
     {
         unsigned long epochTime = getEpochTime();
         String utcTime = getUtcTime();
-        
+
         this->addEntry(severity, message, epochTime, utcTime);
         Serial.print(F("["));
         Serial.print(severity);
@@ -84,7 +80,6 @@ private:
         entry["epochTime"] = epochTime;
         entry["isoDateTime"] = utcTime;
     }
-
 };
 
 Logger *LoggerInstance = new Logger();
@@ -92,7 +87,7 @@ Logger *LoggerInstance = new Logger();
 #define LOG_BUFFER_LENGTH 1024
 
 CustomCommand *showLogCustomCommand = new CustomCommand("showLog", [](String command)
-                                                 {
+                                                        {
     char buffer[LOG_BUFFER_LENGTH];
     JsonDocument response = LoggerInstance->getEntries();
     serializeJson(response, buffer);
@@ -100,7 +95,7 @@ CustomCommand *showLogCustomCommand = new CustomCommand("showLog", [](String com
 
 ArRequestHandlerFunction showLogRequestHandler = [](AsyncWebServerRequest *request)
 {
-    AsyncJsonResponse * resp = new AsyncJsonResponse();
+    AsyncJsonResponse *resp = new AsyncJsonResponse();
     JsonDocument entries = LoggerInstance->getEntries();
     resp->setCode(200);
     resp->getRoot().set(entries);
@@ -108,8 +103,8 @@ ArRequestHandlerFunction showLogRequestHandler = [](AsyncWebServerRequest *reque
     request->send(resp);
 };
 
-Feature *LoggingFeature = new Feature("Logging", []()                               {
+Feature *LoggingFeature = new Feature("Logging", []()
+                                      {
     CommandInterpreterInstance->RegisterCommand(*showLogCustomCommand);
     server.on("/log", HTTP_GET, showLogRequestHandler);
-    return FeatureState::RUNNING;
-                                }, []() {});
+    return FeatureState::RUNNING; }, []() {});

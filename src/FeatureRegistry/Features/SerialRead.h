@@ -1,14 +1,10 @@
 #pragma once
-#include <Arduino.h>
 #include "../Feature.h"
 #include "../../CommandInterpreter/CommandInterpreter.h"
 
-
-
-Feature *SerialReadFeature = new Feature("SerialRead", []() {
-    return FeatureState::RUNNING;
-}, []()
-                                  {
+Feature *SerialReadFeature = new Feature("SerialRead", []()
+                                         { return FeatureState::RUNNING; }, []()
+                                         {
     if (Serial.available())
     {
         String command = Serial.readStringUntil('\n');

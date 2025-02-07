@@ -1,8 +1,6 @@
 #pragma once
 
 #include <Wire.h>
-#include <Arduino.h>
-#include <ArduinoJson.h>
 
 #include "../../config.h"
 #include "../Feature.h"

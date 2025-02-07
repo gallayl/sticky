@@ -1,5 +1,4 @@
 #pragma once
-#include <Arduino.h>
 
 typedef String (*CommandCallbackFunction)(String command);
 

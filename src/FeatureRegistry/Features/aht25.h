@@ -1,10 +1,9 @@
 #pragma once
 
 #include <Wire.h>
-#include <Arduino.h>
-#include <ArduinoJson.h>
 
 #include "../../config.h"
+#include "./Logging.h"
 #include "../Feature.h"
 #include "../../CommandInterpreter/CustomCommand.h"
 #include "../../CommandInterpreter/CommandParser.h"
@@ -13,26 +12,46 @@
 
 #include <Adafruit_AHTX0.h>
 
+#define AHT25_READ_INTERVAL 5000
+
 Adafruit_AHTX0 aht;
+
+struct Reading
+{
+    float temperature;
+    float humidity;
+    unsigned long timestamp;
+};
+
+Reading lastReading = {0, 0, 0};
+
+Reading getTemperatureFromSensor()
+{
+    sensors_event_t temp;
+    sensors_event_t humidity;
+    aht.getEvent(&humidity, &temp);
+
+    Reading reading;
+    reading.temperature = temp.temperature;
+    reading.humidity = humidity.relative_humidity;
+    reading.timestamp = millis();
+
+    return reading;
+}
 
 String readTemperature()
 {
+
     JsonDocument doc = JsonDocument().as<JsonObject>();
 
-    aht.getStatus();
+    if (lastReading.timestamp == 0 || millis() - lastReading.timestamp > AHT25_READ_INTERVAL)
+    {
+        lastReading = getTemperatureFromSensor();
+    }
 
-    aht.getTemperatureSensor()->enableAutoRange(true);
-
-    sensors_event_t temp;
-    aht.getTemperatureSensor()->getEvent(&temp);
-
-    doc["temperature"] = temp.temperature;
-
-    aht.getHumiditySensor()->enableAutoRange(true);
-    sensors_event_t humidity;
-    aht.getHumiditySensor()->getEvent(&humidity);
-
-    doc["humidity"] = humidity.relative_humidity;
+    doc["temperature"] = lastReading.temperature;
+    doc["humidity"] = lastReading.humidity;
+    doc["timestamp"] = lastReading.timestamp;
 
     char buffer[JSON_BUFFER_SIZE];
     serializeJson(doc, buffer);
@@ -56,7 +75,10 @@ Feature *aht25Feature = new Feature("aht25", []()
                                     {
 
 
-    aht.begin(&Wire );
+    if (!aht.begin(&Wire )){
+        LoggerInstance->Error("Failed to init AHT25 sensor");
+        return FeatureState::ERROR;
+    }
 
     CommandInterpreterInstance->RegisterCommand(*aht25Command);
 
