@@ -12,6 +12,7 @@ typedef void (*LogListener)(String, String);
 extern AsyncWebServer server;
 
 #define LOG_LISTENERS_COUNT 10
+#define LOG_MAX_ENTRIES 50
 
 class Logger
 {
@@ -38,6 +39,10 @@ public:
 
     void AddListener(LogListener listener)
     {
+        if (this->listenersCount >= LOG_LISTENERS_COUNT)
+        {
+            return;
+        }
         this->listeners[this->listenersCount] = listener;
         this->listenersCount++;
     }
@@ -46,10 +51,12 @@ public:
     {
         this->entries = JsonDocument().to<JsonArray>();
         this->listenersCount = 0;
+        this->entryCount = 0;
     }
 
 private:
     JsonDocument entries;
+    uint16_t entryCount;
 
     byte listenersCount;
     LogListener listeners[LOG_LISTENERS_COUNT];
@@ -74,6 +81,15 @@ private:
 
     void addEntry(String severity, String message, unsigned long epochTime, String utcTime)
     {
+        if (this->entryCount >= LOG_MAX_ENTRIES)
+        {
+            this->entries.as<JsonArray>().remove(0);
+        }
+        else
+        {
+            this->entryCount++;
+        }
+
         JsonObject entry = this->entries.add<JsonObject>();
         entry["severity"] = severity;
         entry["message"] = message;

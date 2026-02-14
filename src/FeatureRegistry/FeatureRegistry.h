@@ -32,13 +32,11 @@
 #include "./Features/OTA.h"
 #endif
 
-#define FEATURES_SIZE 128
+#define FEATURES_SIZE 16
 
 class FeatureRegistry
 {
 private:
-        String _featureNames[FEATURES_SIZE];
-
         uint8_t _registeredFeaturesCount = 0;
 
 public:
@@ -76,6 +74,11 @@ public:
 
         void RegisterFeature(Feature newFeature)
         {
+                if (this->_registeredFeaturesCount >= FEATURES_SIZE)
+                {
+                        Serial.println(F("ERROR: Feature registry full"));
+                        return;
+                }
                 this->RegisteredFeatures[this->_registeredFeaturesCount] = newFeature;
                 this->_registeredFeaturesCount++;
                 String featureName = newFeature.GetFeatureName();

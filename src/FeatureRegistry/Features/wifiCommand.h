@@ -21,7 +21,7 @@ CustomCommand *wifiCommand = new CustomCommand("wifi", [](String command)
         }
         WiFi.disconnect(true, false);
         WiFi.persistent(true);
-        WiFi.mode(WIFI_AP);
+        WiFi.mode(WIFI_STA);
         WiFi.begin(ssid.c_str(), password.c_str());
         return String("{\"event\": \"connecting\"}");
     }
@@ -47,12 +47,12 @@ CustomCommand *wifiCommand = new CustomCommand("wifi", [](String command)
     if (!operation.compareTo("startSTA"))
     {
         String ssid = CommandParser::GetCommandParameter(command, 2);
-        String passpharse = CommandParser::GetCommandParameter(command, 3);
-        if (ssid.length() < 3 || passpharse.length() < 5)
+        String passphrase = CommandParser::GetCommandParameter(command, 3);
+        if (ssid.length() < 3 || passphrase.length() < 5)
         {
-            return String("{\"error\": \"ssid or passpharse too short\"}");
+            return String("{\"error\": \"ssid or passphrase too short\"}");
         }
-        startStaMode(ssid, passpharse);
+        startStaMode(ssid, passphrase);
         return String("{\"event\": \"starting STA\"}");
     }
 
@@ -70,21 +70,20 @@ CustomCommand *wifiCommand = new CustomCommand("wifi", [](String command)
         if (WiFi.getMode() == WIFI_AP || WiFi.getMode() == WIFI_AP_STA)
         {
             JsonObject ap = response["ap"].to<JsonObject>();
-            ap["ipAddress"] = WiFi.localIP().toString();
-            ap["macAddress"] = WiFi.macAddress();
-            ap["ssid"] = WiFi.SSID();
+            ap["ipAddress"] = WiFi.softAPIP().toString();
+            ap["macAddress"] = WiFi.softAPmacAddress();
         }
-
 
         if (WiFi.getMode() == WIFI_STA || WiFi.getMode() == WIFI_AP_STA)
         {
             JsonObject sta = response["sta"].to<JsonObject>();
-            sta["ipAddress"] = WiFi.softAPIP().toString();
-            sta["macAddress"] = WiFi.softAPmacAddress();
+            sta["ipAddress"] = WiFi.localIP().toString();
+            sta["macAddress"] = WiFi.macAddress();
+            sta["ssid"] = WiFi.SSID();
         }
 
         int32_t rssi = WiFi.RSSI();
-        response["wifiStrengh"] = getSignalStrength(rssi);
+        response["wifiStrength"] = getSignalStrength(rssi);
         response["wifiRssiDb"] = rssi;
 
         char buffer[JSON_BUFFER_SIZE];

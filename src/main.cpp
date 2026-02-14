@@ -5,9 +5,6 @@
 #include "./hw/WiFi.h"
 #include "./FeatureRegistry/FeatureRegistry.h"
 
-int16_t throttleValue = 0;
-int16_t steerValue = 0;
-
 void setup()
 {
     Serial.begin(115200);

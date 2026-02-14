@@ -12,7 +12,7 @@
 
 bool getPirState()
 {
-  return digitalRead(PIR_PIN) == HIGH ? true : false;
+  return digitalRead(PIR_PIN) == HIGH;
 }
 
 struct PirStateHistoryEntry
@@ -24,6 +24,9 @@ struct PirStateHistoryEntry
 #define PIR_HISTORY_SIZE 25
 
 std::vector<PirStateHistoryEntry> pirStateHistory;
+
+volatile bool pirStateChanged = false;
+volatile bool pirLastState = false;
 
 bool getDebouncedPirState(unsigned long timeToDebounce)
 {
@@ -57,18 +60,30 @@ void pushToPirStateHistory(bool state)
 
 void IRAM_ATTR pirMovement()
 {
-  if (digitalRead(PIR_PIN) == HIGH)
+  pirLastState = digitalRead(PIR_PIN) == HIGH;
+  pirStateChanged = true;
+}
+
+void processPirStateChange()
+{
+  if (!pirStateChanged)
+  {
+    return;
+  }
+  pirStateChanged = false;
+  bool state = pirLastState;
+
+  if (state)
   {
     LoggerInstance->Info("PIR movement detected");
     webSocket->textAll("{\"type\":\"pir\",\"state\":true}");
-    pushToPirStateHistory(true);
   }
   else
   {
     LoggerInstance->Info("PIR movement stopped");
     webSocket->textAll("{\"type\":\"pir\",\"state\":false}");
-    pushToPirStateHistory(false);
   }
+  pushToPirStateHistory(state);
 }
 
 CustomCommand *getPirStateCommand = new CustomCommand("getPirState", [](String command)
@@ -110,4 +125,6 @@ Feature *PirFeature = new Feature("pir", []()
 
     server.on("/pir-debounced", HTTP_GET, getDebouncedPirStateAction);
 
-  return FeatureState::RUNNING; }, []() {});
+  return FeatureState::RUNNING; }, []() {
+    processPirStateChange();
+  });

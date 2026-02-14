@@ -68,7 +68,7 @@ CustomCommand *aht25Command = new CustomCommand("aht25", [](String command)
     }
 
 
-    String fallback = "The awailable AHT25 Commands are: read";
+    String fallback = "The available AHT25 Commands are: read";
     return fallback; });
 
 Feature *aht25Feature = new Feature("aht25", []()
