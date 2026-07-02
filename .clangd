@@ -1,9 +1,6 @@
 CompileFlags:
-  # Allow clangd to query the xtensa cross-compiler for its built-in
-  # system include paths, and drop GCC-only flags clang doesn't understand.
-  Add: [-Wno-unknown-warning-option]
-  Remove: [-m*, -f*, -free, -fipa-pta]
-  Compiler: /home/lgallay/.platformio/packages/toolchain-xtensa/bin/xtensa-lx106-elf-g++
+  # Drop xtensa GCC-only flags that clang's parser doesn't understand.
+  Remove: [-mlongcalls, -mtext-section-literals, -falign-functions=4, -free, -fipa-pta]
 
 Diagnostics:
   Suppress: [unknown-argument, drv_unknown_argument]

@@ -3,3 +3,10 @@
 .vscode/c_cpp_properties.json
 .vscode/launch.json
 .vscode/ipch
+
+# clangd IntelliSense (machine-specific, regenerate with `pio run -t compiledb`)
+compile_commands.json
+.cache/
+
+# clang-tidy generated compile DB (regenerate with `python3 .tidy/make_db.py`)
+.tidy/compile_commands.json
