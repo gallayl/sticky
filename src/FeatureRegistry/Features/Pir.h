@@ -7,6 +7,7 @@
 #include "../../CommandInterpreter/CommandInterpreter.h"
 #include "../../services/WebServer.h"
 #include "../../services/WebSocketServer.h"
+#include "../../utils/Json.h"
 
 #define PIR_PIN D6
 
@@ -88,11 +89,9 @@ void processPirStateChange()
 
 CustomCommand *getPirStateCommand = new CustomCommand("getPirState", [](String command)
                                                       {
-  JsonDocument response = JsonDocument().to<JsonObject>();
+  JsonDocument response;
   response["state"] = getPirState();
-  char buffer[JSON_BUFFER_SIZE];
-  serializeJson(response, buffer);
-  return String(buffer); });
+  return jsonToString(response); });
 
 ArRequestHandlerFunction getPirStateAction = [](AsyncWebServerRequest *request)
 {

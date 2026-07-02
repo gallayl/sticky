@@ -4,19 +4,13 @@
 
 ArRequestHandlerFunction onPostUploadFiles = ([](AsyncWebServerRequest *request)
                                               {
-    boolean shouldReboot = !Update.hasError();
-    AsyncWebServerResponse *response = request->beginResponse(200, MIME_plainText, shouldReboot ? "OK" : "FAIL");
+    AsyncWebServerResponse *response = request->beginResponse(200, MIME_plainText, "OK");
     response->addHeader("Connection", "close");
     request->send(response); });
 
 ArUploadHandlerFunction uploadFiles = ([](AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final)
                                        {
-        fs::File file = LittleFS.open("/"+filename, "a");
-
-        if (index == 0 && file.position() > 0)
-        {
-            file.seek(0, fs::SeekSet);
-        }
+        fs::File file = LittleFS.open("/" + filename, index == 0 ? "w" : "a");
 
         if (!file)
         {

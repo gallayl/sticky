@@ -16,7 +16,7 @@ public:
             // this->RegisterCommand(*infoAction);
     }
 
-    void RegisterCommand(CustomCommand newCommand)
+    void RegisterCommand(const CustomCommand &newCommand)
     {
         if (this->_registeredCommandsCount >= COMMANDS_SIZE)
         {

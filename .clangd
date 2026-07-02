@@ -1,0 +1,6 @@
+CompileFlags:
+  # Drop xtensa GCC-only flags that clang's parser doesn't understand.
+  Remove: [-mlongcalls, -mtext-section-literals, -falign-functions=4, -free, -fipa-pta]
+
+Diagnostics:
+  Suppress: [unknown-argument, drv_unknown_argument]

@@ -2,6 +2,7 @@
 #include <LittleFS.h>
 #include "../../../CommandInterpreter/CustomCommand.h"
 #include "../../../api/list.h"
+#include "../../../utils/Json.h"
 #include "../Logging.h"
 
 CustomCommand *showFileListCustomCommand = new CustomCommand("list", [](String command)
@@ -28,9 +29,6 @@ CustomCommand *showFileListCustomCommand = new CustomCommand("list", [](String c
         file.close();
     }
 
-    char buffer[JSON_BUFFER_SIZE];
-    serializeJson(response, buffer);
-
     root.close();
 
-    return String(buffer); });
+    return jsonToString(response); });

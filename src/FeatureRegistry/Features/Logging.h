@@ -6,6 +6,7 @@
 #include "../../CommandInterpreter/CustomCommand.h"
 #include "../../CommandInterpreter/CommandInterpreter.h"
 #include "../../services/WebServer.h"
+#include "../../utils/Json.h"
 
 typedef void (*LogListener)(String, String);
 
@@ -100,14 +101,10 @@ private:
 
 Logger *LoggerInstance = new Logger();
 
-#define LOG_BUFFER_LENGTH 1024
-
 CustomCommand *showLogCustomCommand = new CustomCommand("showLog", [](String command)
                                                         {
-    char buffer[LOG_BUFFER_LENGTH];
     JsonDocument response = LoggerInstance->getEntries();
-    serializeJson(response, buffer);
-    return String(buffer); });
+    return jsonToString(response); });
 
 ArRequestHandlerFunction showLogRequestHandler = [](AsyncWebServerRequest *request)
 {

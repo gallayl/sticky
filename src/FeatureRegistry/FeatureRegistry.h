@@ -72,7 +72,7 @@ public:
 #endif
         }
 
-        void RegisterFeature(Feature newFeature)
+        void RegisterFeature(const Feature &newFeature)
         {
                 if (this->_registeredFeaturesCount >= FEATURES_SIZE)
                 {

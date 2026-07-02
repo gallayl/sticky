@@ -19,11 +19,7 @@ public:
         char *str = NULL;
         int currentSegment = 0;
         while (currentSegment++ <= parameterNo && (str = strtok_r(p, COMMAND_DELIMITER, &p)) != NULL)
-        { // delimiter is the semicolon
-          // Serial.print("Segment ");
-          // Serial.print(currentSegment);
-          // Serial.print(" is ");
-          // Serial.println(str);
+        {
         }
         return str ? String(str) : "";
     }

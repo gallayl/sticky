@@ -7,6 +7,7 @@
 
 #include "../../CommandInterpreter/CommandParser.h"
 #include "../../CommandInterpreter/CustomCommand.h"
+#include "../../utils/Json.h"
 
 CustomCommand *wifiCommand = new CustomCommand("wifi", [](String command)
                                                {
@@ -27,22 +28,20 @@ CustomCommand *wifiCommand = new CustomCommand("wifi", [](String command)
     }
     if (!operation.compareTo("list"))
     {
-        JsonDocument response = JsonDocument().as<JsonArray>();;
+        JsonDocument response;
+        JsonArray networks = response.to<JsonArray>();
 
         int n = WiFi.scanNetworks();
 
         for (int i = 0; i < n; ++i)
         {
-            JsonObject element = response.as<JsonArray>().add<JsonObject>();
+            JsonObject element = networks.add<JsonObject>();
             element["ssid"] = WiFi.SSID(i);
             element["rssi"] = WiFi.RSSI(i);
             element["rssiText"] = getSignalStrength(WiFi.RSSI(i));
             element["encryption"] = getEncryptionType(WiFi.encryptionType(i));
-            response.add(element);
         }
-        char buffer[JSON_BUFFER_SIZE];
-        serializeJson(response, buffer);
-        return String(buffer);
+        return jsonToString(response);
     }
     if (!operation.compareTo("startSTA"))
     {
@@ -52,7 +51,7 @@ CustomCommand *wifiCommand = new CustomCommand("wifi", [](String command)
         {
             return String("{\"error\": \"ssid or passphrase too short\"}");
         }
-        startStaMode(ssid, passphrase);
+        startApMode(ssid, passphrase);
         return String("{\"event\": \"starting STA\"}");
     }
 
@@ -86,9 +85,7 @@ CustomCommand *wifiCommand = new CustomCommand("wifi", [](String command)
         response["wifiStrength"] = getSignalStrength(rssi);
         response["wifiRssiDb"] = rssi;
 
-        char buffer[JSON_BUFFER_SIZE];
-        serializeJson(response, buffer);
-        return String(buffer);
+        return jsonToString(response);
     }
 
     if (!operation.compareTo("restart"))

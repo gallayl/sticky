@@ -32,12 +32,12 @@ public:
         return this->_onLoop();
     }
 
-    String GetFeatureName()
+    String GetFeatureName() const
     {
         return this->_featureName;
     }
 
-    FeatureState GetFeatureState()
+    FeatureState GetFeatureState() const
     {
         return this->_featureState;
     }
@@ -46,5 +46,5 @@ protected:
     String _featureName;
     FeatureSetupFunction _onSetup;
     FeatureLoopFunction _onLoop;
-    FeatureState _featureState;
+    FeatureState _featureState = FeatureState::PENDING;
 };

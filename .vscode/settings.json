@@ -1,0 +1,10 @@
+{
+    // Let clangd query the xtensa cross-compiler for its built-in system
+    // include paths so standard headers (e.g. <cstdint>) resolve correctly.
+    "clangd.arguments": [
+        "--compile-commands-dir=${workspaceFolder}",
+        "--query-driver=/home/lgallay/.platformio/packages/toolchain-xtensa/**",
+        "--header-insertion=never",
+        "--background-index"
+    ]
+}
