@@ -12,14 +12,14 @@ JsonDocument getFileList()
     if (!root || !root.isDirectory())
     {
         return response;
-    };
+    }
 
 #ifdef ESP32
     File file = root.openNextFile("r");
 #else
     File file = root.openNextFile();
 #endif
-    do
+    while (file)
     {
         JsonObject o = fileList.add<JsonObject>();
         o["name"] = file.name();
@@ -29,14 +29,15 @@ JsonDocument getFileList()
         o["path"] = file.path();
 #endif
         o["lastWrite"] = file.getLastWrite();
+        file.close();
 
 #ifdef ESP32
         file = root.openNextFile("r");
 #else
         file = root.openNextFile();
 #endif
-
-    } while (file);
+    }
+    root.close();
     return response;
 }
 

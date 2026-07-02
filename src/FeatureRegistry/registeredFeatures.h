@@ -1,3 +1,3 @@
 #pragma once
 
-JsonDocument registeredFeatures = JsonDocument().to<JsonObject>();
+JsonDocument registeredFeatures;

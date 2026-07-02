@@ -2,6 +2,7 @@
 
 #include "../../CommandInterpreter/CustomCommand.h"
 #include "../../hw/WiFi.h"
+#include "../../utils/Json.h"
 #include <LittleFS.h>
 
 #include <ESP8266WiFi.h>
@@ -39,7 +40,4 @@ JsonDocument getInfo()
 CustomCommand *infoCustomCommand = new CustomCommand("info", [](String command)
                                                      {
     JsonDocument response = getInfo();
-
-    char buffer[JSON_BUFFER_SIZE];
-    serializeJson(response, buffer);
-    return String(buffer); });
+    return jsonToString(response); });

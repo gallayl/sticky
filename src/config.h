@@ -2,14 +2,8 @@
 
 #define WEBSOCKETS_URL "/ws"
 
-#define STA_SSID "sticky"
-#define STA_PASSPHRASE "sticky1234"
-
-#define STA_IP "192.168.0.1"
-#define STA_GATEWAY "192.168.0.1"
-#define STA_NETMASK "255.255.255.0"
-
-#define JSON_BUFFER_SIZE 2048
+#define AP_SSID "sticky"
+#define AP_PASSPHRASE "sticky1234"
 
 /**
  * Enables the LittleFS File System feature

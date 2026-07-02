@@ -49,12 +49,12 @@ String getEncryptionType(uint8_t type)
     return "Unknown";
 }
 
-void startStaMode(String ssid, String staPassPhrase)
+void startApMode(String ssid, String passPhrase)
 {
-    if (WiFi.getMode() == WIFI_AP && WiFi.begin() != WL_CONNECTED)
+    if (WiFi.getMode() == WIFI_AP && WiFi.status() != WL_CONNECTED)
     {
         WiFi.mode(WIFI_AP_STA);
-        WiFi.softAP(ssid, staPassPhrase);
+        WiFi.softAP(ssid, passPhrase);
     }
 }
 
@@ -99,7 +99,7 @@ void initWifi()
     if (state != WL_CONNECTED)
     {
         LoggerInstance->Error(F("Failed to connect to access point"));
-        startStaMode(STA_SSID, STA_PASSPHRASE);
+        startApMode(AP_SSID, AP_PASSPHRASE);
     }
     else
     {

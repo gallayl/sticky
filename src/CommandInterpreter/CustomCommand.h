@@ -13,7 +13,7 @@ public:
         return this->_onExecute(command);
     }
 
-    String GetCommandName()
+    String GetCommandName() const
     {
         return this->_commandName;
     }

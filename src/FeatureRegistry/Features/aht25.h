@@ -9,6 +9,7 @@
 #include "../../CommandInterpreter/CommandParser.h"
 #include "../../CommandInterpreter/CommandInterpreter.h"
 #include "../../services/WebServer.h"
+#include "../../utils/Json.h"
 
 #include <Adafruit_AHTX0.h>
 
@@ -42,7 +43,7 @@ Reading getTemperatureFromSensor()
 String readTemperature()
 {
 
-    JsonDocument doc = JsonDocument().as<JsonObject>();
+    JsonDocument doc;
 
     if (lastReading.timestamp == 0 || millis() - lastReading.timestamp > AHT25_READ_INTERVAL)
     {
@@ -53,9 +54,7 @@ String readTemperature()
     doc["humidity"] = lastReading.humidity;
     doc["timestamp"] = lastReading.timestamp;
 
-    char buffer[JSON_BUFFER_SIZE];
-    serializeJson(doc, buffer);
-    return String(buffer);
+    return jsonToString(doc);
 }
 
 CustomCommand *aht25Command = new CustomCommand("aht25", [](String command)

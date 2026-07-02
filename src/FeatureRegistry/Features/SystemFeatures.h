@@ -7,6 +7,7 @@
 #include "../../CommandInterpreter/CustomCommand.h"
 #include "../FeatureRegistry.h"
 #include "../../services/WebServer.h"
+#include "../../utils/Json.h"
 
 CustomCommand *resetCommand = new CustomCommand("restart", [](String command)
                                                 {
@@ -14,16 +15,11 @@ CustomCommand *resetCommand = new CustomCommand("restart", [](String command)
     return String("{\"event\": \"restart\"}"); });
 
 CustomCommand *getRegisteredFeatures = new CustomCommand("getRegisteredFeatures", [](String command)
-                                                         {
-    char output[1024];
-    serializeJson(registeredFeatures, output);
-    return String(output); });
+                                                         { return jsonToString(registeredFeatures); });
 
 ArRequestHandlerFunction getFeaturesAction = [](AsyncWebServerRequest *request)
 {
-    char output[1024];
-    serializeJson(registeredFeatures, output);
-    request->send(200, MIME_json, output);
+    request->send(200, MIME_json, jsonToString(registeredFeatures));
 };
 
 ArRequestHandlerFunction reset = [](AsyncWebServerRequest *request)

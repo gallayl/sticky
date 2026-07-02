@@ -8,10 +8,12 @@
 #include "../../CommandInterpreter/CommandParser.h"
 #include "../../CommandInterpreter/CommandInterpreter.h"
 #include "../../services/WebServer.h"
+#include "../../utils/Json.h"
 
 String scanDevices()
 {
-    JsonDocument doc = JsonDocument().as<JsonArray>();
+    JsonDocument doc;
+    JsonArray devices = doc.to<JsonArray>();
 
     byte error, address;
 
@@ -22,14 +24,12 @@ String scanDevices()
 
         if (error == 0)
         {
-            JsonObject device = doc.as<JsonArray>().add<JsonObject>();
+            JsonObject device = devices.add<JsonObject>();
             device["address"] = address;
         }
     }
 
-    char buffer[JSON_BUFFER_SIZE];
-    serializeJson(doc, buffer);
-    return String(buffer);
+    return jsonToString(doc);
 }
 
 String readDevice(uint16_t address, uint16_t size)
@@ -43,9 +43,7 @@ String readDevice(uint16_t address, uint16_t size)
         bytes.add(Wire.read());
     }
 
-    char buffer[JSON_BUFFER_SIZE];
-    serializeJson(doc, buffer);
-    return String(buffer);
+    return jsonToString(doc);
 }
 
 void writeDevice(uint16_t address, String data)
@@ -81,7 +79,7 @@ CustomCommand *i2cCommand = new CustomCommand("i2c", [](String command)
     }
     else if (sub == "read")
     {
-        uint16_t address = CommandParser::GetCommandParameter(command, 2).toInt();
+        uint16_t address = strtol(CommandParser::GetCommandParameter(command, 2).c_str(), 0, 16);
         uint16_t size = CommandParser::GetCommandParameter(command, 3).toInt();
         return readDevice(address, size);
     }
